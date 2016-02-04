@@ -2,6 +2,7 @@ package edu.uw.mapdemo;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -9,6 +10,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import static com.google.android.gms.maps.GoogleMap.*;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -39,8 +44,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(47.6550, -122.3080);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in UW"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng sydney = new LatLng(47.6550, -122.3080);  //gives the lat and lng for the marker
+        mMap.setTrafficEnabled(true);
+        mMap.addMarker(new MarkerOptions()
+                .position(sydney) //set the position of the marker
+                .title("Marker in UW")); //give it a title
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
+
+
+        /*
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .add(new LatLng(48.6550, -123.3080))
+                .add(new LatLng(46.6550, -123.3080))
+                .add(new LatLng(48.6550, -121.3080))
+                .add(new LatLng(46.6550, -121.3080))
+                .add(new LatLng(48.6550, -123.3080));
+
+        final Polyline polyline = googleMap.addPolyline(polylineOptions);
+
+        polyline.setClickable(true);
+        mMap.setOnPolylineClickListener(new OnPolylineClickListener(){
+            @Override
+            public void onPolylineClick(Polyline polyline)
+            {
+                Log.v("Google Map", "You clicked me!");
+                int strokeColor = polyline.getColor() ^ 0x00ffffff;
+                polyline.setColor(strokeColor);
+                polyline.setWidth(20);
+            }
+        });
+        */
     }
 }

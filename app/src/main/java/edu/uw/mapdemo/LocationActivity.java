@@ -38,11 +38,14 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     private static final String TAG = "** LOC DEMO **";
 
     GoogleApiClient mGoogleApiClient;
+    private static final int LOC_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         if(mGoogleApiClient == null) {
             mGoogleApiClient =
@@ -70,6 +73,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     /** Helper method for getting location **/
     public void getLocation(View v){
         if(mGoogleApiClient != null) {
+            /*
             Location loc = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if(loc != null) {
 
@@ -77,6 +81,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
                 ((TextView) findViewById(R.id.txt_lng)).setText("" + loc.getLongitude());
             }else
                 Log.v(TAG, "Last loccation is null");
+            */
         }
     }
 
@@ -119,7 +124,37 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
         request.setFastestInterval(5000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, request, this);
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            //if we have the permission, do the thing
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, request, this);
+        } else {
+            //if the user denies the permission once, you should explain the rationale for the permission next time
+            // see documentation for shouldShowRequestPermissionRationale
+            //if(ActivityCompat.shouldShowRequestPermissionRationale(...))
+
+            //if not, ask for the permission
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOC_REQUEST_CODE);
+
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case LOC_REQUEST_CODE: { //if asked for location
+                //see if we got any permission, and see what permission is granted
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onConnected(null); //then we run the onConnect method
+                }
+            }
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
