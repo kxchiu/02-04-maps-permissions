@@ -1,3 +1,3 @@
-# 02-02 Location Location Location
+# 02-04 Maps & Permissions
 
-Code demoing Location-awareness and basic Maps
+Code demoing Google Maps, Permissions, and File usage
